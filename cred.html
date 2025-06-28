@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rigged Spinner</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      background: #121212;
+      color: #f0f0f0;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    #spinner {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 10px solid #555;
+      margin: 2rem auto;
+      margin-top: 0px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(255,255,255,0.1);
+    }
+
+    .section {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      top: 50%;
+      left: 50%;
+      transform-origin: 0% 0%;
+    }
+
+    .section:nth-child(1) { transform: rotate(0deg); background: #ff1744; }
+    .section:nth-child(2) { transform: rotate(90deg); background: #00e676; }
+    .section:nth-child(3) { transform: rotate(180deg); background: #2979ff; }
+    .section:nth-child(4) { transform: rotate(270deg); background: #ffea00; }
+
+    .section span {
+      position: absolute;
+      top: 50px;
+      left: 50px;
+      rotate: 90deg;
+      color: #121212;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    #marker {
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 30px solid #ffffff;
+      margin: 0 auto;
+      rotate: 180deg;
+    }
+
+    #spinBtn {
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      background: #1e88e5;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #spinBtn:hover {
+      background: #1565c0;
+    }
+
+    #winMessage {
+      display: none;
+      font-size: 1.5rem;
+      color: #ffea00;
+      margin-top: 2rem;
+      animation: popIn 1s ease forwards;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: red;
+      top: -10px;
+      animation: confetti-fall 3s linear infinite;
+    }
+
+    @keyframes confetti-fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎰 Chutiya cred Spinner</h1>
+  <div id="marker"></div>
+  <div id="spinner">
+    <div class="section"><span>₹1000</span></div>
+    <div class="section"><span>₹5000</span></div>
+    <div class="section"><span>₹2000</span></div>
+    <div class="section"><span>GHANTA</span></div>
+  </div>
+
+  <button id="spinBtn">Spin Now</button>
+  <div id="winMessage">🎉 You won a grand winning of GHANTA! 🎉</div>
+
+  <!-- Audio elements -->
+  <audio id="spinSound" src="bicycle-gear-45545.mp3" preload="auto"></audio>
+  <audio id="winSound" src="https://www.soundjay.com/human/sounds/applause-8.mp3" preload="auto"></audio>
+
+  <script>
+    const spinner = document.getElementById('spinner');
+    const btn = document.getElementById('spinBtn');
+    const winMessage = document.getElementById('winMessage');
+    const spinSound = document.getElementById('spinSound');
+    const winSound = document.getElementById('winSound');
+
+    function launchConfetti() {
+      for (let i = 0; i < 30; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        confetti.style.animationDelay = (Math.random() * 2) + 's';
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 3000);
+      }
+    }
+
+    btn.addEventListener('click', () => {
+      spinner.style.transition = 'none';
+      spinner.style.transform = 'rotate(0deg)';
+      winMessage.style.display = 'none';
+
+      const minBLNT = 272;
+      const maxBLNT = 358;
+      const randomBLNT = Math.random() * (maxBLNT - minBLNT) + minBLNT;
+      const fullSpins = 4 * 360;
+      const finalRotation = fullSpins + randomBLNT;
+
+      // Play spinning sound
+      spinSound.currentTime = 0;
+      spinSound.play();
+
+      setTimeout(() => {
+        spinner.style.transition = 'transform 4s cubic-bezier(0.1, 1, 0.3, 1)';
+        spinner.style.transform = `rotate(${finalRotation}deg)`;
+
+        setTimeout(() => {
+          spinSound.pause();
+          winSound.currentTime = 0;
+          winSound.play();
+          winMessage.style.display = 'block';
+          launchConfetti();
+        }, 4000);
+      }, 100);
+    });
+  </script>
+
+</body>
+</html>
